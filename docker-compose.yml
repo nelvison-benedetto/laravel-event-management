@@ -1,0 +1,27 @@
+services:
+  mysql:
+    image: mariadb:10.8.3
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: laravel_eventmanagement  #aggiunto oggi!
+    ports:
+      - 3307:3306  #cambia la porta esterna a 3307(3306 è gia in uso dal TCP!)
+    volumes:
+      - mysql_data:/var/lib/mysql  #salva dati su disco, e non in ram
+    networks:
+      - mynetwork
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+volumes:
+  mysql_data:  # Definizione del volume
