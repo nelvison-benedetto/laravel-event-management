@@ -4,22 +4,42 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\EventResource;  //x nidificare tutto il return dentro un  "data": ...
+use App\Http\Traits\CanLoadRelationships;
 use App\Models\Event;
 use Illuminate\Http\Request;
 
+
 class EventController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {  # use Postman software with GET url http://127.0.0.1:8000/api/events
-        return EventResource::collection(Event::with('user')->get());
+    use CanLoadRelationships;
+    private array $relations = ['user','attendees','attendees.user'];  //BETTER if also readonly!
+
+    public function __construct(){
+        //$this->middleware('auth:sanctum')->except(['index', 'show']);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    public function index()
+    {  # use Postman software with GET url http://127.0.0.1:8000/api/events + ?include= user/attendees/attendees.user o le combinazioni di questi 3
+           //i.e. http://127.0.0.1:8000/api/events?include=user,attendees,attendee.user
+
+        $query = $this->loadRelationships(Event::query());
+        return EventResource::collection(
+            $query->latest()->paginate()
+        );
+    }
+
+    protected function shouldIncludeRelation(string $relation):bool{
+        $include = request()->query('include');
+        if(!$include){
+            return false;
+        }
+        $relations =array_map('trim',explode(',',$include)) ;
+        //dd($relations);  //x debug, preview GET http://127.0.0.1:8000/api/events?include=user,attendees,attendees.user
+        return in_array($relation,$relations);
+    }
+
+
+
     public function store(Request $request)
     {   # use Postman software with POST url http://127.0.0.1:8000/api/events + set headers key=Accept value=application/json  (xk se no di return hai html(e return l'ultimo trovato quindi la home page html))
         #body raw  {"name":"First event","start_time":"2023-07-01 15:00:00","end_time":"2023-07-01 16:00:00"}
@@ -30,23 +50,20 @@ class EventController extends Controller
                 'start_time' => 'required|date',
                 'end_time' => 'required|date|after:start_time',
             ]),
-            'user_id' => 1
+            'user_id' => $request->user()->id
         ]);
-        return new EventResource($event);
+        return new EventResource($this->loadRelationships($event));
     }
 
-    /**
-     * Display the specified resource.
-     */
+
     public function show(Event $event)
     {  #Postman GET url http://127.0.0.1:8000/api/events/2
-        $event->load('user','attendees');
-        return new EventResource($event);
+        return new EventResource(
+            $this->loadRelationships($event)
+        );
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+
     public function update(Request $request, Event $event)
     {       # use Postman software with PUT url http://127.0.0.1:8000/api/events/2  + body raw {"name": "My edited Text!"}
         $event->update(
@@ -57,18 +74,16 @@ class EventController extends Controller
                 'end_date' => 'sometimes|date|after:start_time',
             ])
         );
-        return new EventResource($event);
+        return new EventResource($this->loadRelationships($event));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy(Event $event)
     {   #Postman DELETE url http://127.0.0.1:8000/api/events/2
         $event->delete();
         // return response()->json([
         //     'message' => 'Event deleted successfully'  #x debug
         // ]);
-        return response(status:204);  //mex return 'No Content Available' means target doesn't exist anymore
+        return response()->noContent(); //response(status:204);  //mex return 'No Content Available' means target doesn't exist anymore
     }
 }
