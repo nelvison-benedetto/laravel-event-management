@@ -46,7 +46,7 @@ return [
     |
     */
 
-    'expiration' => null,
+    'expiration' => 60*24, //60min x 24 means 1day before auto expiration
 
     /*
     |--------------------------------------------------------------------------

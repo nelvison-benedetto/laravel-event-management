@@ -6,16 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\EventResource;  //x nidificare tutto il return dentro un  "data": ...
 use App\Http\Traits\CanLoadRelationships;
 use App\Models\Event;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Gate;
 
 class EventController extends Controller
 {
     use CanLoadRelationships;
+    use AuthorizesRequests;
     private array $relations = ['user','attendees','attendees.user'];  //BETTER if also readonly!
 
     public function __construct(){
         //$this->middleware('auth:sanctum')->except(['index', 'show']);
+        $this->authorizeResource(Event::class, 'event');  //usa authorizeResource() solo se hai la policy x Event
     }
 
     public function index()
@@ -66,6 +69,11 @@ class EventController extends Controller
 
     public function update(Request $request, Event $event)
     {       # use Postman software with PUT url http://127.0.0.1:8000/api/events/2  + body raw {"name": "My edited Text!"}
+        // if(Gate::denies('update-event', $event)){
+        //     abort(403, 'You are not authorized to update this event.');
+        // }
+        //$this->authorize('update-event', $event);  //ora usa la invece la policy, questo fa la stessa identica cosa del code sopra commentato, ha bisogno di use AuthorizesRequests;
+
         $event->update(
             $request->validate([
                 'name' => 'sometimes|string|max:255',
