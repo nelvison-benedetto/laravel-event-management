@@ -11,17 +11,17 @@ class EventPolicy
     /**
      * Determine whether the user can view any models.
      */
-    public function viewAny(?User $user): bool  //? means optional
+    public function viewAny(?User $user): bool  //? = the param can also be null(inauthenticated user!) //now i'm testing no need auth
     {
-        return true;
+        return true; //anyone can see the list of events
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(?User $user, Event $event): bool
+    public function view(?User $user, Event $event): bool  //? = the param can also be null(inauthenticated user!)
     {
-        return true;
+        return true;  //anyone can see a target event
     }
 
     /**
@@ -37,7 +37,7 @@ class EventPolicy
      */
     public function update(User $user, Event $event): bool
     {
-        return $user->id === $event->user_id; // Solo il creatore può modificarlo
+        return $user->id === $event->user_id;  //only the creator can edit the event
     }
 
     /**
@@ -45,7 +45,7 @@ class EventPolicy
      */
     public function delete(User $user, Event $event): bool
     {
-        return $user->id === $event->user_id; // Solo il creatore può cancellarlo
+        return $user->id === $event->user_id;  //only the creator can delete the event
     }
 
     /**

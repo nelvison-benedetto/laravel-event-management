@@ -12,11 +12,10 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 use Illuminate\Support\Facades\Gate;
 
 
-
 class AuthServiceProvider extends ServiceProvider
 {
 
-    protected $policies = [
+    protected $policies = [  //records auth action policies x Event and Attendee models
         Event::class => EventPolicy::class,
         Attendee::class => AttendeePolicy::class,
     ];
@@ -33,7 +32,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //now instead i'm using the policies!
+        //now I use policies instead(better)!
         // Gate::define('update-event', function($user, Event $event){
         //     return $user->id == $event->user_id;
         // });

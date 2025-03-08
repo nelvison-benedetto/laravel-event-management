@@ -14,7 +14,7 @@ class AttendeePolicy
      */
     public function viewAny(?User $user): bool
     {
-        return true;
+        return true;  //anyone can see the list of attendees
     }
 
     /**
@@ -22,7 +22,7 @@ class AttendeePolicy
      */
     public function view(?User $user, Attendee $attendee): bool
     {
-        return true;
+        return true;  //anyone can see the target attendee
     }
 
     /**
@@ -47,7 +47,7 @@ class AttendeePolicy
     public function delete(User $user, Attendee $attendee): bool
     {
         return $user->id === $attendee->event->user_id  ||
-            $user->id === $attendee->user_id;
+            $user->id === $attendee->user_id;  //only the user attendee  or the creator of the event can delete the attendee
     }
 
     /**

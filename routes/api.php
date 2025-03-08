@@ -22,7 +22,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 //     Route::delete('/events/{event}/attendees/{attendee}', [AttendeeController::class, 'destroy']);
 // });
 
-
 Route::post('/login', [AuthController::class, 'login']);
   //POST http://127.0.0.1:8000/api/login + header key:accept value:application/json
     //body {"email" : "king.lelia@example.org","password" : "password"} and you receive the token
@@ -35,12 +34,12 @@ Route::post('/login', [AuthController::class, 'login']);
     //now in Environments(barra a sx)>global>add:  variable:TOKEN   current value: mytokenoftheuser
     //now in request Authorization:bearer token: {{TOKEN}}
 
-Route::post('/logout', [AuthController::class, 'logout'])  //POST http://127.0.0.1:8000/api/logout  (devi farlo quando sei ancora signin)
+Route::post('/logout', [AuthController::class, 'logout'])  //POST http://127.0.0.1:8000/api/logout  (you have to do it while you are still signIn)
     ->middleware('auth:sanctum');
 
 Route::apiResource('events', EventController::class);  //i am using events through auth
-Route::apiResource('events.attendees',AttendeeController::class)
-    ->scoped()->except(['update']);
+Route::apiResource('events.attendees',AttendeeController::class)  //sub-resource i.e. GET /events/{event}/attendees ({event} is a num) and managed by AttendeeController
+    ->scoped()->except(['update']);  //scoped() x apply to a specific sub-resource
 
 
 

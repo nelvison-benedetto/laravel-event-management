@@ -13,9 +13,9 @@ class Attendee extends Model
     protected $fillable = ['user_id'];
 
     public function user():BelongsTo{
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class);  //1 User belongs to 1 user, lrv search fk user_id in tab attendees
     }
     public function event():BelongsTo{
-        return $this->belongsTo(Event::class);
+        return $this->belongsTo(Event::class);  //1 Attendee belongs to 1 Event, lrv search event_id in tab attendees
     }
 }

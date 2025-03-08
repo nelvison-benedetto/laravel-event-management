@@ -23,7 +23,7 @@ class AttendeeController extends Controller
         Gate::middleware('auth:sanctum')->except(['index', 'show','update']);
         //$this->authorizeResource(Attendee::class, 'attendee');  //authorizeResource NON FUNZIONA X GLI ANNIDATI, qua Attendee dipende da Event, lrv si aspetta param attendee ma invece riceve event/{event}/attendees/{attendee}
         Gate::middleware('throttle:60,1')
-            ->only(['store','update','destroy']); //LIMIT OF USAGE, MAX 60requests/minute, better set in RouteServiceProvider
+            ->only(['store','update','destroy']); //LIMIT OF USAGE, MAX 60requests/minute, better set it in RouteServiceProvider.php
     }
 
     public function index(Event $event)  // //http://127.0.0.1:8000/api/events/3/attendees
@@ -35,7 +35,7 @@ class AttendeeController extends Controller
         $attendees = $this->loadRelationships(
             $event->attendees()->latest()
         );
-        return AttendeeResource::collection(
+        return AttendeeResource::collection(  //AttendeeResource::collection correct json format x response
             $attendees->paginate()
         );
     }
@@ -51,7 +51,7 @@ class AttendeeController extends Controller
                 'user_id' => $request->user()->id
             ])
         );
-        return new AttendeeResource($attendee);
+        return new AttendeeResource($attendee);  //correct json format x response
     }
 
     public function show(Event $event, Attendee $attendee)  //http://127.0.0.1:8000/api/events/3/attendees/1939 + headers params key:Accept value:application/js
@@ -75,6 +75,6 @@ class AttendeeController extends Controller
         //Gate::authorize('delete-attendee', [$event, $attendee]);
         Gate::authorize('delete', $attendee);
         $attendee->delete();
-        return response()->noContent();   //in postaman you will see 204 No Content
+        return response()->noContent();   //noContent() operation done, no content to return anymore(status 204)
     }
 }

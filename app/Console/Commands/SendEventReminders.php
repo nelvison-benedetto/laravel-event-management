@@ -13,7 +13,7 @@ class SendEventReminders extends Command
      *
      * @var string
      */
-    protected $signature = 'app:send-event-reminders';
+    protected $signature = 'app:send-event-reminders';  //php artisan command to send notifications
 
     /**
      * The console command description.
@@ -48,7 +48,6 @@ class SendEventReminders extends Command
           //run on console with php artisan app:send-event-reminders
           //quindi se vuoi inviare il reminder a tutti ogni giorno(esempio)
              //$schedule->command('app:send-event-reminders')->daily();  //questo aggiungilo in Schedule(){} in Kernel.php
-
 
     }
 }

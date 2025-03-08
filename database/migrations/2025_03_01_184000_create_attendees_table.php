@@ -15,9 +15,9 @@ return new class extends Migration
     {
         Schema::create('attendees', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::class);
-            $table->foreignIdFor(Event::class);
-            $table->timestamps();
+            $table->foreignIdFor(User::class);  //the user,
+            $table->foreignIdFor(Event::class);   //the user's event
+            $table->timestamps();   //fields created_at e updated_at
         });
     }
 
